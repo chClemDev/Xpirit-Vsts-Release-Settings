@@ -1,9 +1,9 @@
 {
   "manifestVersion": 1,
-  "id": "PascalNaber-Xpirit-WebAppConfiguration",
+  "id": "PascalNaber-Xpirit-WebAppConfiguration-DigitalVenue",
   "name": "Azure WebApp Configuration task",
   "version": "1.0.1",
-  "publisher": "pascalnaber",
+  "publisher": "msesc-digitalvenue",
   "public": true,
   "targets": [
     {
