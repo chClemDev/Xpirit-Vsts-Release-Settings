@@ -35,7 +35,10 @@ import-module "Microsoft.TeamFoundation.DistributedTask.Task.Common"
 # $settingHelperPath = "./Modules\Xpirit.Vsts.Release.SettingHelper.dll"
 # import-module $settingHelperPath
 
-import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psm1"
+# import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psm1"
+
+Import-Module -Name $PSScriptRoot\ps_modules\VstsTaskSdk\VstsTaskSdk.psm1
+Import-VstsLocStrings "$PSScriptRoot\Task.json"
 
 Write-Verbose "**USING NEWEST VERSION***"
 
@@ -198,8 +201,8 @@ function Read-Variables-From-VSTS()
 	# Get all variables. Loop through each and apply if needed.
 	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext 
 
-	# $script:vstsVariables = Get-VstsTaskVariableInfo
-	$script:vstsVariables = Get-TaskVariableInfo
+	$script:vstsVariables = Get-VstsTaskVariableInfo
+	# $script:vstsVariables = Get-TaskVariableInfo
 
 	Write-Verbose "Variable Values: " $vstsVariables 
 	# $vstsVariables.Keys | %{ Write-Verbose "$_ = $($vstsVariables[$_])" }
