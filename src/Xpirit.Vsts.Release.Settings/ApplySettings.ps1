@@ -37,6 +37,8 @@ import-module "Microsoft.TeamFoundation.DistributedTask.Task.Common"
 
 import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psm1"
 
+Write-Host "**Version 2.0.5***"
+
 #Convert string parameters to bools
 $Clean = (Convert-String $Cleanup Boolean)
 $Validate = (Convert-String $ValidateFlag Boolean)
