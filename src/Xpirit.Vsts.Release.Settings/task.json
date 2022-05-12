@@ -1,5 +1,5 @@
 {
-  "id": "589ED0E7-982C-4317-928F-19C419C947DC",
+  "id": "589ED0E7-982C-4317-928F-19C419C947D2",
   "name": "webappconfiguration",
   "friendlyName": "Apply variables to Azure webapp",
   "description": "Apply AppSettings and ConnectionStrings from VSTS variables to a webapp",

@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "id": "PascalNaber-Xpirit-WebAppConfiguration-DigitalVenue",
-  "name": "Azure WebApp Configuration task",
-  "version": "2.0.2",
+  "name": "Azure WebApp Configuration task - DigitalVenue",
+  "version": "2.0.3",
   "publisher": "msesc-digitalvenue",
   "public": true,
   "targets": [
@@ -56,7 +56,7 @@
 
   "contributions": [
     {
-      "id": "Xpirit-Vsts-Release-WebSettings",
+      "id": "Xpirit-Vsts-Release-WebSettings-DigitalVenue",
       "type": "ms.vss-distributed-task.task",
       "targets": [
         "ms.vss-distributed-task.tasks"
