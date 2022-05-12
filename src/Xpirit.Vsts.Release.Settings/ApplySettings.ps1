@@ -201,8 +201,8 @@ function Read-Variables-From-VSTS()
 	# $script:vstsVariables = Get-VstsTaskVariableInfo
 	$script:vstsVariables = Get-TaskVariableInfo
 
-	Write-Verbose "Variable Values"
-	$vstsVariables.Keys | %{ Write-Verbose "$_ = $($vstsVariables[$_])" }
+	Write-Verbose "Variable Values: " $vstsVariables 
+	# $vstsVariables.Keys | %{ Write-Verbose "$_ = $($vstsVariables[$_])" }
 }
 
 function Validate-WebConfigVariablesAreInVSTSVariables()
