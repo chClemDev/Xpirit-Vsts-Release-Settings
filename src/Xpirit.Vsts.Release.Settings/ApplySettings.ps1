@@ -32,8 +32,10 @@ Write-Verbose "Importing modules"
 import-module "Microsoft.TeamFoundation.DistributedTask.Task.Internal"
 import-module "Microsoft.TeamFoundation.DistributedTask.Task.Common"
 
-$settingHelperPath = "./Modules\Xpirit.Vsts.Release.SettingHelper.dll"
-import-module $settingHelperPath
+# $settingHelperPath = "./Modules\Xpirit.Vsts.Release.SettingHelper.dll"
+# import-module $settingHelperPath
+
+import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psm1"
 
 #Convert string parameters to bools
 $Clean = (Convert-String $Cleanup Boolean)
@@ -192,7 +194,10 @@ function Read-Variables-From-VSTS()
 {
 	Write-Verbose "Read-Variables-From-VSTS"
 	# Get all variables. Loop through each and apply if needed.
-	$script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext 
+	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext 
+
+	$script:vstsVariables = Get-VstsTaskVariableInfo
+
 	Write-Verbose "Variable Values"
 	$vstsVariables.Keys | %{ Write-Verbose "$_ = $($vstsVariables[$_])" }
 }
