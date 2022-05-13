@@ -57,13 +57,13 @@ function Read-Variables-From-VSTS()
 	# $script:vstsVariables = Get-VstsTaskVariableInfo
 
 
-	$plainAllVars = Get-TaskVariableInfo
-	$plainSingleVar = Get-TaskVariable -Name 'devOpsOrg'
+	# $plainAllVars = Get-TaskVariableInfo
+	# $plainSingleVar = Get-TaskVariable -Name 'devOpsOrg'
 	$vstsAllVars = Get-VstsTaskVariableInfo
 	$vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
 
-	Write-Verbose "plainAllVars :" $plainAllVars 
-	Write-Verbose "plainSingleVar :" $plainSingleVar
+	# Write-Verbose "plainAllVars :" $plainAllVars 
+	# Write-Verbose "plainSingleVar :" $plainSingleVar
 	Write-Verbose "vstsAllVars :" $vstsAllVars
 	Write-Verbose "vstsSingleVar :" $vstsSingleVar
 
