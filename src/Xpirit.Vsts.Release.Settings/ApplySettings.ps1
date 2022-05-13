@@ -52,20 +52,20 @@ function Read-Variables-From-VSTS()
 {
 	Write-Verbose "Read-Variables-From-VSTS"
 	# Get all variables. Loop through each and apply if needed.
-	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext 
+	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext
 
 	# $script:vstsVariables = Get-VstsTaskVariableInfo
 	
-
-
 	# $plainAllVars = Get-TaskVariableInfo
 	# $plainSingleVar = Get-TaskVariable -Name 'devOpsOrg'
 	$vstsAllVars = @(Get-VstsTaskVariableInfo)
+	$vstsSingleVarFromAllVars = Get-VstsTaskVariableInfo | Where-Object { $_.Name -eq "devOpsOrg" }
 	$vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
 
 	# Write-Verbose "plainAllVars :" $plainAllVars 
 	# Write-Verbose "plainSingleVar :" $plainSingleVar
-	Write-Verbose "vstsAllVars : $vstsAllVars" 
+	Write-Verbose "vstsAllVars : $vstsAllVars"
+	Write-Verbose "vstsSingleVarFromAllVars : $vstsSingleVarFromAllVars" 
 	Write-Verbose "vstsSingleVar : $vstsSingleVar" 
 
 	# $script:vstsVariables = Get-TaskVariableInfo
