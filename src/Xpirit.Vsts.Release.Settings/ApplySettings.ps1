@@ -35,16 +35,41 @@ import-module "Microsoft.TeamFoundation.DistributedTask.Task.Common"
 # $settingHelperPath = "./Modules\Xpirit.Vsts.Release.SettingHelper.dll"
 # import-module $settingHelperPath
 
-# import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psm1"
+import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psm1"
 
-Import-Module -Name $PSScriptRoot\ps_modules\VstsTaskSdk\VstsTaskSdk.psm1
-Import-VstsLocStrings "$PSScriptRoot\Task.json"
+# Import-Module -Name $PSScriptRoot\ps_modules\VstsTaskSdk\VstsTaskSdk.psm1
+# Import-VstsLocStrings "$PSScriptRoot\Task.json"
 
 Write-Verbose "**USING NEWEST VERSION***"
 
 #Convert string parameters to bools
 $Clean = (Convert-String $Cleanup Boolean)
 $Validate = (Convert-String $ValidateFlag Boolean)
+
+function Read-Variables-From-VSTS()
+{
+	Write-Verbose "Read-Variables-From-VSTS"
+	# Get all variables. Loop through each and apply if needed.
+	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext 
+
+	# $script:vstsVariables = Get-VstsTaskVariableInfo
+
+
+	$plainAllVars = Get-TaskVariableInfo
+	$plainSingleVar = Get-TaskVariable -Name 'devOpsOrg'
+	$vstsAllVars = Get-VstsTaskVariableInfo
+	$vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
+
+	Write-Verbose "plainAllVars :" $plainAllVars 
+	Write-Verbose "plainSingleVar :" $plainSingleVar
+	Write-Verbose "vstsAllVars :" $vstsAllVars
+	Write-Verbose "vstsSingleVar :" $vstsSingleVar
+
+	# $script:vstsVariables = Get-TaskVariableInfo
+
+	# Write-Verbose "Variable Values: " $vstsVariables 
+	# $vstsVariables.Keys | %{ Write-Verbose "$_ = $($vstsVariables[$_])" }
+}
 
 function Output-ValidationResults()
 {
@@ -193,19 +218,6 @@ function Read-Sticky-Settings()
 		$stickyConnectionStringNames.AddRange($script:stickySlot.properties.connectionStringNames)
 	}
 	Write-Verbose "Finished Read-Sticky-Settings"
-}
-
-function Read-Variables-From-VSTS()
-{
-	Write-Verbose "Read-Variables-From-VSTS"
-	# Get all variables. Loop through each and apply if needed.
-	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext 
-
-	$script:vstsVariables = Get-VstsTaskVariableInfo
-	# $script:vstsVariables = Get-TaskVariableInfo
-
-	Write-Verbose "Variable Values: " $vstsVariables 
-	# $vstsVariables.Keys | %{ Write-Verbose "$_ = $($vstsVariables[$_])" }
 }
 
 function Validate-WebConfigVariablesAreInVSTSVariables()
