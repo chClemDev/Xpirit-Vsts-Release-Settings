@@ -29,13 +29,15 @@ Write-Verbose "Parameter Values"
 $PSBoundParameters.Keys | %{ Write-Verbose "$_ = $($PSBoundParameters[$_])" }
 
 Write-Verbose "Importing modules"
-import-module "Microsoft.TeamFoundation.DistributedTask.Task.Internal"
-import-module "Microsoft.TeamFoundation.DistributedTask.Task.Common"
+# import-module "Microsoft.TeamFoundation.DistributedTask.Task.Internal"
+# import-module "Microsoft.TeamFoundation.DistributedTask.Task.Common"
 
 # $settingHelperPath = "./Modules\Xpirit.Vsts.Release.SettingHelper.dll"
 # import-module $settingHelperPath
 
-import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psm1"
+import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psd1"
+
+Write-VstsTaskWarning -Message "Expand Variable task is no longer required. The 2.0 agent will automatically expand variables."
 
 # Import-Module -Name $PSScriptRoot\ps_modules\VstsTaskSdk\VstsTaskSdk.psm1
 # Import-VstsLocStrings "$PSScriptRoot\Task.json"
