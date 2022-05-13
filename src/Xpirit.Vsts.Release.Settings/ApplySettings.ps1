@@ -48,6 +48,97 @@ Write-Verbose "agentVersion : $agentVersion"
 $Clean = (Convert-String $Cleanup Boolean)
 $Validate = (Convert-String $ValidateFlag Boolean)
 
+$script:knownVariables2 = @{ }
+
+
+function Get-VariableKey-Debug {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name)
+
+    if ($Name -ne 'agent.jobstatus') {
+        $Name = $Name.Replace('.', '_')
+    }
+
+    $Name.ToUpperInvariant()
+}
+
+
+function Debug-Variable-Result-Set()
+{
+	Write-Verbose "Debug-Variable-Result-Set"
+
+	foreach ($variable in (Get-ChildItem -Path Env:ENDPOINT_?*, Env:INPUT_?*, Env:SECRET_?*, Env:SECUREFILE_?*)) {
+        # Record the secret variable metadata. This is required by Get-TaskVariable to
+        # retrieve the value. In a 2.104.1 agent or higher, this metadata will be overwritten
+        # when $env:VSTS_SECRET_VARIABLES is processed.
+        if ($variable.Name -like 'SECRET_?*') {
+            $variableKey = $variable.Name.Substring('SECRET_'.Length)
+            $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
+                # This is technically not the variable name (has underscores instead of dots),
+                # but it's good enough to make Get-TaskVariable work in a pre-2.104.1 agent
+                # where $env:VSTS_SECRET_VARIABLES is not defined.
+                Name = $variableKey
+                Secret = $true
+            }
+        }
+
+        # # Store the value in the vault.
+        # $vaultKey = $variable.Name
+        # if ($variable.Value) {
+        #     $script:vault[$vaultKey] = New-Object System.Management.Automation.PSCredential(
+        #         $vaultKey,
+        #         (ConvertTo-SecureString -String $variable.Value -AsPlainText -Force))
+        # }
+
+		Write-Verbose "Removing Item : $variable."
+
+        # Clear the environment variable.
+        Remove-Item -LiteralPath "Env:$($variable.Name)"
+    }
+
+	if ($env:VSTS_PUBLIC_VARIABLES) {
+        foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_PUBLIC_VARIABLES)) {
+            $variableKey = Get-VariableKeyDebug -Name $name
+            $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
+                Name = $name
+                Secret = $false
+            }
+        }
+
+        $env:VSTS_PUBLIC_VARIABLES = ''
+    } else{
+		Write-Verbose "No VSTS_PUBLIC VARIABLES"
+	}
+
+	# Record the secret variable names. Env var added in 2.104.1 agent.
+    if ($env:VSTS_SECRET_VARIABLES) {
+        foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_SECRET_VARIABLES)) {
+            $variableKey = Get-VariableKeyDebug -Name $name
+            $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
+                Name = $name
+                Secret = $true
+            }
+        }
+
+        $env:VSTS_SECRET_VARIABLES = ''
+    } else{
+		Write-Verbose "No VSTS_SECRET_VARIABLES"
+	}
+
+	foreach ($info in $script:knownVariables2.Values) {
+		Write-Verbose $info
+		# New-Object -TypeName psobject -Property @{
+		# 	Name = $info.Name
+		# 	Value = Get-TaskVariable -Name $info.Name
+		# 	Secret = $info.Secret
+		# }
+	}
+
+	Write-Verbose "Ending Debug-Variable-Result-Set"
+}
+
 function Read-Variables-From-VSTS()
 {
 	Write-Verbose "Read-Variables-From-VSTS"
@@ -372,6 +463,7 @@ Read-WebConfigToPrepareValidation
 Read-Settings-From-WebApp
 Read-Sticky-Settings
 Read-Variables-From-VSTS
+Debug-Variable-Result-Set
 
 foreach ($h in $vstsVariables.GetEnumerator()) {
 	Write-Verbose "Processing vstsvariable: $($h.Key): $($h.Value)"
