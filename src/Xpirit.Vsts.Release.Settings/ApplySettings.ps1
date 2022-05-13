@@ -57,15 +57,21 @@ function Read-Variables-From-VSTS()
 	# $script:vstsVariables = Get-VstsTaskVariableInfo
 	
 	# $plainAllVars = Get-TaskVariableInfo
-	# $plainSingleVar = Get-TaskVariable -Name 'devOpsOrg'
-	$vstsAllVars = @(Get-VstsTaskVariableInfo)
-	$vstsSingleVarFromAllVars = Get-VstsTaskVariableInfo | Where-Object { $_.Name -eq "devOpsOrg" }
+	# $plainSingleVar = Get-TaskVariable -Name 'devOpsOrg'\
+
+	# $vstsAllVars = @(Get-VstsTaskVariableInfo)
+	$vstsAllVars = Get-VstsTaskVariableInfo -ErrorVariable allVarErrors -WarningVariable allVarWarnings -OutVariable allVarOutVariable
+	Write-Verbose "allVarErrors: " $allVarErrors
+	Write-Verbose "allVarWarnings: " $allVarWarnings
+	Write-Verbose "allVarOutVariable: " $allVarOutVariable	
+
+	# $vstsSingleVarFromAllVars = Get-VstsTaskVariableInfo | Where-Object { $_.Name -eq "devOpsOrg" }
 	$vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
 
 	# Write-Verbose "plainAllVars :" $plainAllVars 
 	# Write-Verbose "plainSingleVar :" $plainSingleVar
 	Write-Verbose "vstsAllVars : $vstsAllVars"
-	Write-Verbose "vstsSingleVarFromAllVars : $vstsSingleVarFromAllVars" 
+	# Write-Verbose "vstsSingleVarFromAllVars : $vstsSingleVarFromAllVars" 
 	Write-Verbose "vstsSingleVar : $vstsSingleVar" 
 
 	# $script:vstsVariables = Get-TaskVariableInfo
