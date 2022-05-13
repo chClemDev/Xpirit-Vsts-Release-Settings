@@ -64,8 +64,8 @@ function Read-Variables-From-VSTS()
 
 	# Write-Verbose "plainAllVars :" $plainAllVars 
 	# Write-Verbose "plainSingleVar :" $plainSingleVar
-	Write-Verbose "vstsAllVars :" $vstsAllVars
-	Write-Verbose "vstsSingleVar :" $vstsSingleVar
+	Write-Verbose "vstsAllVars : $vstsAllVars" 
+	Write-Verbose "vstsSingleVar : $vstsSingleVar" 
 
 	# $script:vstsVariables = Get-TaskVariableInfo
 
