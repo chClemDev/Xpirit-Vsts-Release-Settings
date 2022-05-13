@@ -40,7 +40,7 @@ import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psd1"
 # Import-Module -Name $PSScriptRoot\ps_modules\VstsTaskSdk\VstsTaskSdk.psm1
 # Import-VstsLocStrings "$PSScriptRoot\Task.json"
 
-$agentVersion = Get-VstsTaskVariable -Name 'agent.tempDirectory'
+$agentVersion = Get-VstsTaskVariable -Name 'agent.Version'
 
 Write-Verbose "agentVersion : $agentVersion"
 
