@@ -37,12 +37,12 @@ Write-Verbose "Importing modules"
 
 import-module "./ps_modules/VstsTaskSdk/VstsTaskSdk.psd1"
 
-Write-VstsTaskWarning -Message "Expand Variable task is no longer required. The 2.0 agent will automatically expand variables."
-
 # Import-Module -Name $PSScriptRoot\ps_modules\VstsTaskSdk\VstsTaskSdk.psm1
 # Import-VstsLocStrings "$PSScriptRoot\Task.json"
 
-Write-Verbose "**USING NEWEST VERSION***"
+$agentVersion = Get-VstsTaskVariable -Name 'agent.tempDirectory'
+
+Write-Verbose "agentVersion : $agentVersion"
 
 #Convert string parameters to bools
 $Clean = (Convert-String $Cleanup Boolean)
@@ -55,6 +55,7 @@ function Read-Variables-From-VSTS()
 	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext 
 
 	# $script:vstsVariables = Get-VstsTaskVariableInfo
+	
 
 
 	# $plainAllVars = Get-TaskVariableInfo
