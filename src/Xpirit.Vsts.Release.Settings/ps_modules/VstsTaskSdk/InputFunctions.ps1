@@ -424,8 +424,13 @@ function Get-Value {
 }
 
 function Initialize-Inputs {
+
+    Write-Verbose "Debug - Initialize-Inputs"
+
     # Store endpoints, inputs, and secret variables in the vault.
     foreach ($variable in (Get-ChildItem -Path Env:ENDPOINT_?*, Env:INPUT_?*, Env:SECRET_?*, Env:SECUREFILE_?*)) {
+
+        Write-Verbose "Debug - $variable"
         # Record the secret variable metadata. This is required by Get-TaskVariable to
         # retrieve the value. In a 2.104.1 agent or higher, this metadata will be overwritten
         # when $env:VSTS_SECRET_VARIABLES is processed.
@@ -455,6 +460,7 @@ function Initialize-Inputs {
     # Record the public variable names. Env var added in 2.104.1 agent.
     if ($env:VSTS_PUBLIC_VARIABLES) {
         foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_PUBLIC_VARIABLES)) {
+            Write-Verbose "Debug - public vars - $name"
             $variableKey = Get-VariableKey -Name $name
             $script:knownVariables[$variableKey] = New-Object -TypeName psobject -Property @{
                 Name = $name
@@ -468,6 +474,7 @@ function Initialize-Inputs {
     # Record the secret variable names. Env var added in 2.104.1 agent.
     if ($env:VSTS_SECRET_VARIABLES) {
         foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_SECRET_VARIABLES)) {
+            Write-Verbose "Debug - secret vars - $name"
             $variableKey = Get-VariableKey -Name $name
             $script:knownVariables[$variableKey] = New-Object -TypeName psobject -Property @{
                 Name = $name
@@ -477,6 +484,8 @@ function Initialize-Inputs {
 
         $env:VSTS_SECRET_VARIABLES = ''
     }
+
+    Write-Verbose "Debug - End Initialize-Inputs"
 }
 
 function Get-VariableKey {
