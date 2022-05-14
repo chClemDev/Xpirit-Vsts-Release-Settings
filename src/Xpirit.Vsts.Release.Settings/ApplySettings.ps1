@@ -162,12 +162,20 @@ function Read-Variables-From-VSTS()
 
 	# $vstsSingleVarFromAllVars = Get-VstsTaskVariableInfo | Where-Object { $_.Name -eq "devOpsOrg" }
 	$vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
-
+	$vstsSingleVar2 = Get-VstsTaskVariable -Name 'appsetting.PublicSearchIndexApiKey'
+	$vstsSingleVar3 = Get-VstsTaskVariable -Name 'appsetting_PublicSearchIndexApiKey'
+	$vstsSingleVar4 = Get-VstsTaskVariable -Name 'APPSETTING_PUBLICSEARCHINDEXAPIKEY'
+	$vstsSingleVar5 = Get-VstsTaskVariable -Name 'APPSETTING.PUBLICSEARCHINDEXAPIKEY'
+	
 	# Write-Verbose "plainAllVars :" $plainAllVars 
 	# Write-Verbose "plainSingleVar :" $plainSingleVar
 	Write-Verbose "vstsAllVars : $vstsAllVars"
 	# Write-Verbose "vstsSingleVarFromAllVars : $vstsSingleVarFromAllVars" 
-	Write-Verbose "vstsSingleVar : $vstsSingleVar" 
+	Write-Verbose "vstsSingleVar : $vstsSingleVar"
+	Write-Verbose "vstsSingleVar2 : $vstsSingleVar2"
+	Write-Verbose "vstsSingleVar3 : $vstsSingleVar3"
+	Write-Verbose "vstsSingleVar4 : $vstsSingleVar4"
+	Write-Verbose "vstsSingleVar5 : $vstsSingleVar5" 
 
 	# $script:vstsVariables = Get-TaskVariableInfo
 
