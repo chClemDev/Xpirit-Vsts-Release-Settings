@@ -51,93 +51,93 @@ $Validate = (Convert-String $ValidateFlag Boolean)
 $script:knownVariables2 = @{ }
 
 
-function Get-VariableKey-Debug {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Name)
+# function Get-VariableKey-Debug {
+#     [CmdletBinding()]
+#     param(
+#         [Parameter(Mandatory = $true)]
+#         [string]$Name)
 
-    if ($Name -ne 'agent.jobstatus') {
-        $Name = $Name.Replace('.', '_')
-    }
+#     if ($Name -ne 'agent.jobstatus') {
+#         $Name = $Name.Replace('.', '_')
+#     }
 
-    $Name.ToUpperInvariant()
-}
+#     $Name.ToUpperInvariant()
+# }
 
 
-function Debug-Variable-Result-Set()
-{
-	Write-Verbose "Debug-Variable-Result-Set"
+# function Debug-Variable-Result-Set()
+# {
+# 	Write-Verbose "Debug-Variable-Result-Set"
 
-	foreach ($variable in (Get-ChildItem -Path Env:ENDPOINT_?*, Env:INPUT_?*, Env:SECRET_?*, Env:SECUREFILE_?*)) {
-        # Record the secret variable metadata. This is required by Get-TaskVariable to
-        # retrieve the value. In a 2.104.1 agent or higher, this metadata will be overwritten
-        # when $env:VSTS_SECRET_VARIABLES is processed.
-        if ($variable.Name -like 'SECRET_?*') {
-            $variableKey = $variable.Name.Substring('SECRET_'.Length)
-            $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
-                # This is technically not the variable name (has underscores instead of dots),
-                # but it's good enough to make Get-TaskVariable work in a pre-2.104.1 agent
-                # where $env:VSTS_SECRET_VARIABLES is not defined.
-                Name = $variableKey
-                Secret = $true
-            }
-        }
+# 	foreach ($variable in (Get-ChildItem -Path Env:ENDPOINT_?*, Env:INPUT_?*, Env:SECRET_?*, Env:SECUREFILE_?*)) {
+#         # Record the secret variable metadata. This is required by Get-TaskVariable to
+#         # retrieve the value. In a 2.104.1 agent or higher, this metadata will be overwritten
+#         # when $env:VSTS_SECRET_VARIABLES is processed.
+#         if ($variable.Name -like 'SECRET_?*') {
+#             $variableKey = $variable.Name.Substring('SECRET_'.Length)
+#             $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
+#                 # This is technically not the variable name (has underscores instead of dots),
+#                 # but it's good enough to make Get-TaskVariable work in a pre-2.104.1 agent
+#                 # where $env:VSTS_SECRET_VARIABLES is not defined.
+#                 Name = $variableKey
+#                 Secret = $true
+#             }
+#         }
 
-        # # Store the value in the vault.
-        # $vaultKey = $variable.Name
-        # if ($variable.Value) {
-        #     $script:vault[$vaultKey] = New-Object System.Management.Automation.PSCredential(
-        #         $vaultKey,
-        #         (ConvertTo-SecureString -String $variable.Value -AsPlainText -Force))
-        # }
+#         # # Store the value in the vault.
+#         # $vaultKey = $variable.Name
+#         # if ($variable.Value) {
+#         #     $script:vault[$vaultKey] = New-Object System.Management.Automation.PSCredential(
+#         #         $vaultKey,
+#         #         (ConvertTo-SecureString -String $variable.Value -AsPlainText -Force))
+#         # }
 
-		Write-Verbose "Removing Item : $variable."
+# 		Write-Verbose "Removing Item : $variable."
 
-        # Clear the environment variable.
-        Remove-Item -LiteralPath "Env:$($variable.Name)"
-    }
+#         # Clear the environment variable.
+#         Remove-Item -LiteralPath "Env:$($variable.Name)"
+#     }
 
-	if ($env:VSTS_PUBLIC_VARIABLES) {
-        foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_PUBLIC_VARIABLES)) {
-            $variableKey = Get-VariableKeyDebug -Name $name
-            $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
-                Name = $name
-                Secret = $false
-            }
-        }
+# 	if ($env:VSTS_PUBLIC_VARIABLES) {
+#         foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_PUBLIC_VARIABLES)) {
+#             $variableKey = Get-VariableKeyDebug -Name $name
+#             $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
+#                 Name = $name
+#                 Secret = $false
+#             }
+#         }
 
-        $env:VSTS_PUBLIC_VARIABLES = ''
-    } else{
-		Write-Verbose "No VSTS_PUBLIC VARIABLES"
-	}
+#         $env:VSTS_PUBLIC_VARIABLES = ''
+#     } else{
+# 		Write-Verbose "No VSTS_PUBLIC VARIABLES"
+# 	}
 
-	# Record the secret variable names. Env var added in 2.104.1 agent.
-    if ($env:VSTS_SECRET_VARIABLES) {
-        foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_SECRET_VARIABLES)) {
-            $variableKey = Get-VariableKeyDebug -Name $name
-            $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
-                Name = $name
-                Secret = $true
-            }
-        }
+# 	# Record the secret variable names. Env var added in 2.104.1 agent.
+#     if ($env:VSTS_SECRET_VARIABLES) {
+#         foreach ($name in (ConvertFrom-Json -InputObject $env:VSTS_SECRET_VARIABLES)) {
+#             $variableKey = Get-VariableKeyDebug -Name $name
+#             $script:knownVariables2[$variableKey] = New-Object -TypeName psobject -Property @{
+#                 Name = $name
+#                 Secret = $true
+#             }
+#         }
 
-        $env:VSTS_SECRET_VARIABLES = ''
-    } else{
-		Write-Verbose "No VSTS_SECRET_VARIABLES"
-	}
+#         $env:VSTS_SECRET_VARIABLES = ''
+#     } else{
+# 		Write-Verbose "No VSTS_SECRET_VARIABLES"
+# 	}
 
-	foreach ($info in $script:knownVariables2.Values) {
-		Write-Verbose $info
-		# New-Object -TypeName psobject -Property @{
-		# 	Name = $info.Name
-		# 	Value = Get-TaskVariable -Name $info.Name
-		# 	Secret = $info.Secret
-		# }
-	}
+# 	foreach ($info in $script:knownVariables2.Values) {
+# 		Write-Verbose $info
+# 		# New-Object -TypeName psobject -Property @{
+# 		# 	Name = $info.Name
+# 		# 	Value = Get-TaskVariable -Name $info.Name
+# 		# 	Secret = $info.Secret
+# 		# }
+# 	}
 
-	Write-Verbose "Ending Debug-Variable-Result-Set"
-}
+# 	Write-Verbose "Ending Debug-Variable-Result-Set"
+# }
 
 function Read-Variables-From-VSTS()
 {
@@ -145,37 +145,36 @@ function Read-Variables-From-VSTS()
 	# Get all variables. Loop through each and apply if needed.
 	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext
 
-	# $script:vstsVariables = Get-VstsTaskVariableInfo
-	
-	# $plainAllVars = Get-TaskVariableInfo
-	# $plainSingleVar = Get-TaskVariable -Name 'devOpsOrg'\
-
 	# $vstsAllVars = @(Get-VstsTaskVariableInfo)
-	$vstsAllVars = Get-VstsTaskVariableInfo -ErrorVariable allVarErrors -WarningVariable allVarWarnings -OutVariable allVarOutVariable
+	$vstsAllVarsWithOutputs = Get-VstsTaskVariableInfo -ErrorVariable allVarErrors -WarningVariable allVarWarnings -OutVariable allVarOutVariable
 	Write-Verbose "allVarErrors : $allVarErrors" 
 	Write-Verbose "allVarWarnings : $allVarWarnings" 
 	Write-Verbose "allVarOutVariable : $allVarOutVariable" 
 
-	$allVarErrors | ForEach-Object{ write-host $_}
-	$allVarWarnings | ForEach-Object{ write-host $_}
-	$allVarOutVariable | ForEach-Object{ write-host $_}
+	$vstsAllVars = Get-VstsTaskVariableInfo
 
-	# $vstsSingleVarFromAllVars = Get-VstsTaskVariableInfo | Where-Object { $_.Name -eq "devOpsOrg" }
+	# $allVarErrors | ForEach-Object{ write-host $_}
+	# $allVarWarnings | ForEach-Object{ write-host $_}
+	# $allVarOutVariable | ForEach-Object{ write-host $_}
+
 	$vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
-	$vstsSingleVar2 = Get-VstsTaskVariable -Name 'appsetting.PublicSearchIndexApiKey'
-	$vstsSingleVar3 = Get-VstsTaskVariable -Name 'appsetting_PublicSearchIndexApiKey'
-	$vstsSingleVar4 = Get-VstsTaskVariable -Name 'APPSETTING_PUBLICSEARCHINDEXAPIKEY'
-	$vstsSingleVar5 = Get-VstsTaskVariable -Name 'APPSETTING.PUBLICSEARCHINDEXAPIKEY'
+	# $vstsSingleVarFromAllVars = Get-VstsTaskVariableInfo | Where-Object { $_.Name -eq "devOpsOrg" }
+	# $vstsSingleVar2 = Get-VstsTaskVariable -Name 'appsetting.PublicSearchIndexApiKey'
+	# $vstsSingleVar3 = Get-VstsTaskVariable -Name 'appsetting_PublicSearchIndexApiKey'
+	# $vstsSingleVar4 = Get-VstsTaskVariable -Name 'APPSETTING_PUBLICSEARCHINDEXAPIKEY'
+	# $vstsSingleVar5 = Get-VstsTaskVariable -Name 'APPSETTING.PUBLICSEARCHINDEXAPIKEY'
 	
-	# Write-Verbose "plainAllVars :" $plainAllVars 
-	# Write-Verbose "plainSingleVar :" $plainSingleVar
 	Write-Verbose "vstsAllVars : $vstsAllVars"
 	# Write-Verbose "vstsSingleVarFromAllVars : $vstsSingleVarFromAllVars" 
 	Write-Verbose "vstsSingleVar : $vstsSingleVar"
-	Write-Verbose "vstsSingleVar2 : $vstsSingleVar2"
-	Write-Verbose "vstsSingleVar3 : $vstsSingleVar3"
-	Write-Verbose "vstsSingleVar4 : $vstsSingleVar4"
-	Write-Verbose "vstsSingleVar5 : $vstsSingleVar5" 
+	# Write-Verbose "vstsSingleVar2 : $vstsSingleVar2"
+	# Write-Verbose "vstsSingleVar3 : $vstsSingleVar3"
+	# Write-Verbose "vstsSingleVar4 : $vstsSingleVar4"
+	# Write-Verbose "vstsSingleVar5 : $vstsSingleVar5" 
+
+	$vstsAllVars.foreach({
+		Write-host $_
+	})
 
 	# $script:vstsVariables = Get-TaskVariableInfo
 
@@ -471,7 +470,7 @@ Read-WebConfigToPrepareValidation
 Read-Settings-From-WebApp
 Read-Sticky-Settings
 Read-Variables-From-VSTS
-Debug-Variable-Result-Set
+# Debug-Variable-Result-Set
 
 foreach ($h in $vstsVariables.GetEnumerator()) {
 	Write-Verbose "Processing vstsvariable: $($h.Key): $($h.Value)"
