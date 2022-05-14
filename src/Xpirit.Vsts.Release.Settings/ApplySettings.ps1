@@ -144,37 +144,39 @@ function Read-Variables-From-VSTS()
 	Write-Verbose "Read-Variables-From-VSTS"
 	# Get all variables. Loop through each and apply if needed.
 	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext
+	$script:vstsAllVars = Get-Item -Path Env:*
 
 	# $vstsAllVars = @(Get-VstsTaskVariableInfo)
-	$vstsAllVarsWithOutputs = Get-VstsTaskVariableInfo -ErrorVariable allVarErrors -WarningVariable allVarWarnings -OutVariable allVarOutVariable
-	Write-Verbose "allVarErrors : $allVarErrors" 
-	Write-Verbose "allVarWarnings : $allVarWarnings" 
-	Write-Verbose "allVarOutVariable : $allVarOutVariable" 
+	# $vstsAllVarsWithOutputs = Get-VstsTaskVariableInfo -ErrorVariable allVarErrors -WarningVariable allVarWarnings -OutVariable allVarOutVariable
+	# Write-Verbose "allVarErrors : $allVarErrors" 
+	# Write-Verbose "allVarWarnings : $allVarWarnings" 
+	# Write-Verbose "allVarOutVariable : $allVarOutVariable" 
 
-	$vstsAllVars = Get-VstsTaskVariableInfo
+	# $vstsAllVars = Get-VstsTaskVariableInfo
+
 
 	# $allVarErrors | ForEach-Object{ write-host $_}
 	# $allVarWarnings | ForEach-Object{ write-host $_}
 	# $allVarOutVariable | ForEach-Object{ write-host $_}
 
-	$vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
+	# $vstsSingleVar = Get-VstsTaskVariable -Name 'devOpsOrg'
 	# $vstsSingleVarFromAllVars = Get-VstsTaskVariableInfo | Where-Object { $_.Name -eq "devOpsOrg" }
 	# $vstsSingleVar2 = Get-VstsTaskVariable -Name 'appsetting.PublicSearchIndexApiKey'
 	# $vstsSingleVar3 = Get-VstsTaskVariable -Name 'appsetting_PublicSearchIndexApiKey'
 	# $vstsSingleVar4 = Get-VstsTaskVariable -Name 'APPSETTING_PUBLICSEARCHINDEXAPIKEY'
 	# $vstsSingleVar5 = Get-VstsTaskVariable -Name 'APPSETTING.PUBLICSEARCHINDEXAPIKEY'
 	
-	Write-Verbose "vstsAllVars : $vstsAllVars"
+	# Write-Verbose "vstsAllVars : $vstsAllVars"
 	# Write-Verbose "vstsSingleVarFromAllVars : $vstsSingleVarFromAllVars" 
-	Write-Verbose "vstsSingleVar : $vstsSingleVar"
+	# Write-Verbose "vstsSingleVar : $vstsSingleVar"
 	# Write-Verbose "vstsSingleVar2 : $vstsSingleVar2"
 	# Write-Verbose "vstsSingleVar3 : $vstsSingleVar3"
 	# Write-Verbose "vstsSingleVar4 : $vstsSingleVar4"
-	# Write-Verbose "vstsSingleVar5 : $vstsSingleVar5" 
+	# Write-Verbose "vstsSingleVar5 : $vstsSingleVar5"
 
-	$vstsAllVars.foreach({
-		Write-host $_
-	})
+	# $vstsAllVars.foreach({
+	# 	Write-host $_
+	# })
 
 	# $script:vstsVariables = Get-TaskVariableInfo
 
@@ -472,22 +474,26 @@ Read-Sticky-Settings
 Read-Variables-From-VSTS
 # Debug-Variable-Result-Set
 
-foreach ($h in $vstsVariables.GetEnumerator()) {
-	Write-Verbose "Processing vstsvariable: $($h.Key): $($h.Value)"
+# foreach ($h in $vstsVariables.GetEnumerator()) {
+$vstsVariables.foreach({
+	Write-Verbose "Processing vstsvariable: $($_.Name): $($_.Value)"
 
-	$originalKey = $h.Key
+	$originalKey = $_.Name
 	$cleanKey = $originalKey.Replace(".sticky", "").Replace("appsetting.", "").Replace("connectionstring.", "")
-	$Value = Get-TaskVariable $distributedTaskContext $originalKey
+	# $Value = Get-TaskVariable $distributedTaskContext $originalKey
+	$value = Get-VstsTaskVariable -Name $originalKey
 
 	if ($originalKey.StartsWith("appsetting."))
 	{	
-		AddSettingAsAppSetting -originalKey $originalKey -cleanKey $cleanKey -value $Value
+		AddSettingAsAppSetting -originalKey $originalKey -cleanKey $cleanKey -value $value
 	}
 	elseif ($originalKey.StartsWith("connectionstring."))
 	{		
 		AddSettingAsConnectionString -originalKey $originalKey -cleanKey $cleanKey -value $value
 	}
-}
+})
+	
+# }
 
 Validate-WebConfigVariablesAreInVSTSVariables
 
