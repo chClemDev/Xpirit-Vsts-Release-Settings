@@ -454,7 +454,7 @@ function Initialize-Inputs {
         }
 
         # Clear the environment variable.
-        Remove-Item -LiteralPath "Env:$($variable.Name)"
+        # Remove-Item -LiteralPath "Env:$($variable.Name)"
     }
 
     # Record the public variable names. Env var added in 2.104.1 agent.
