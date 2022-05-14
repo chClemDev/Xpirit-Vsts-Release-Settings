@@ -144,7 +144,7 @@ function Read-Variables-From-VSTS()
 	Write-Verbose "Read-Variables-From-VSTS"
 	# Get all variables. Loop through each and apply if needed.
 	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext
-	$script:vstsAllVars = Get-Item -Path Env:*
+	$script:vstsVariables = Get-Item -Path Env:*
 
 	# $vstsAllVars = @(Get-VstsTaskVariableInfo)
 	# $vstsAllVarsWithOutputs = Get-VstsTaskVariableInfo -ErrorVariable allVarErrors -WarningVariable allVarWarnings -OutVariable allVarOutVariable
