@@ -428,7 +428,8 @@ function Initialize-Inputs {
     # Write-Verbose "Debug - Initialize-Inputs"
 
     # Store endpoints, inputs, and secret variables in the vault.
-    foreach ($variable in (Get-ChildItem -Path Env:ENDPOINT_?*, Env:INPUT_?*, Env:SECRET_?*, Env:SECUREFILE_?*)) {
+    # foreach ($variable in (Get-ChildItem -Path Env:ENDPOINT_?*, Env:INPUT_?*, Env:SECRET_?*, Env:SECUREFILE_?*)) {
+    foreach ($variable in (Get-ChildItem -Path Env:*)) {
 
         # Write-Verbose "Debug - $variable"
         # Record the secret variable metadata. This is required by Get-TaskVariable to

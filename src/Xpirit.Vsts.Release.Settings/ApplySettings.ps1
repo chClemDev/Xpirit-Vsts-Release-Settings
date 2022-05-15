@@ -146,7 +146,7 @@ function Read-Variables-From-VSTS()
 	# $script:vstsVariables = Get-TaskVariables -Context $distributedTaskContext
 	$script:vstsVariables = Get-Item -Path Env:*
 
-	# $vstsAllVars = @(Get-VstsTaskVariableInfo)
+	$vstsAllVars = @(Get-VstsTaskVariableInfo)
 	# $vstsAllVarsWithOutputs = Get-VstsTaskVariableInfo -ErrorVariable allVarErrors -WarningVariable allVarWarnings -OutVariable allVarOutVariable
 	# Write-Verbose "allVarErrors : $allVarErrors" 
 	# Write-Verbose "allVarWarnings : $allVarWarnings" 
@@ -166,7 +166,8 @@ function Read-Variables-From-VSTS()
 	# $vstsSingleVar4 = Get-VstsTaskVariable -Name 'APPSETTING_PUBLICSEARCHINDEXAPIKEY'
 	# $vstsSingleVar5 = Get-VstsTaskVariable -Name 'APPSETTING.PUBLICSEARCHINDEXAPIKEY'
 	
-	# Write-Verbose "vstsAllVars : $vstsAllVars"
+	Write-Verbose "vstsAllVars : $vstsAllVars"
+
 	# Write-Verbose "vstsSingleVarFromAllVars : $vstsSingleVarFromAllVars" 
 	# Write-Verbose "vstsSingleVar : $vstsSingleVar"
 	# Write-Verbose "vstsSingleVar2 : $vstsSingleVar2"
@@ -174,9 +175,9 @@ function Read-Variables-From-VSTS()
 	# Write-Verbose "vstsSingleVar4 : $vstsSingleVar4"
 	# Write-Verbose "vstsSingleVar5 : $vstsSingleVar5"
 
-	# $vstsAllVars.foreach({
-	# 	Write-host $_
-	# })
+	$vstsAllVars.foreach({
+		Write-host $_
+	})
 
 	# $script:vstsVariables = Get-TaskVariableInfo
 
